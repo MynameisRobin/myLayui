@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>合并版使用 - layui</title>
+
+    <link rel="stylesheet" href="../build/css/layui.css">
+
+    <style>
+        body {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="demo1"> </div>
+    <div id="tpl"></div>
+    <button class="layui-btn demo" data-type="test">测试弹出式Form</button>
+    <script src="../build/lay/dest/layui.all.js"></script>
+    <script id="demo" type="text/html">
+        <ul>
+            {{# layui.each(d.list, function(index, item){ }}
+            <li>
+                <span>{{ item.content || '' }}</span>
+                <span>{{ item.site || '' }}</span>
+            </li>
+            {{# }); }} {{# if(d.list.length === 0){ }} 无数据 {{# } }}
+        </ul>
+    </script>
+    <script>
+        var $ = layui.jquery,
+            layer = layui.layer,
+            form = layui.form(),
+            laypage = layui.laypage,
+            laytpl = layui.laytpl;
+        $(function() {
+            var data = {
+                "title": "Layui常用模块",
+                "list": [{
+                    "content": "我是第一条公告",
+                    "alias": "layer",
+                    "site": "layer.layui.com"
+                }, {
+                    "content": "我是第2条公告",
+                    "modname": "表单",
+                    "alias": "form"
+                }, {
+                    "content": "我是第3条公告",
+                    "modname": "表单",
+                    "alias": "form"
+                }, {
+                    "content": "我是4条公告",
+                    "modname": "表单",
+                    "alias": "form"
+                }, {
+                    "content": "我是第5条公告",
+                    "modname": "表单",
+                    "alias": "form"
+                }, {
+                    "content": "我是第6条公告",
+                    "modname": "表单",
+                    "alias": "form"
+                }]
+            };
+            var getTpl = $("#demo").html();
+            laytpl(getTpl).render(data, function(html) {
+                $("#tpl").html(html);
+            });
+            layer.msg("123");
+            laypage({
+                cont: 'demo1',
+                pages: data.list.length,
+                groups: 3 //连续显示分页数
+            });
+            //触发事件
+            var active = {
+                test: function() {
+                    layer.open({
+                        type: 1,
+                        resize: false,
+                        content: ['<ul class="layui-form" style="margin: 10px;">', '<li class="layui-form-item">', '<label class="layui-form-label">邮箱激活</label>', '<div class="layui-input-block">', '<select name="activate">', '<option value="0">未激活</option>', '<option value="1">已激活</option>', '<select>', '</div>', '</li>', '<li class="layui-form-item" style="text-align:center;">', '<button type="submit" lay-submit lay-filter="*" class="layui-btn">提交</button>', '</li>', '</ul>'].join(''),
+                        success: function(layero) {
+                            layero.find('.layui-layer-content').css('overflow', 'visible');
+
+                            form.render().on('submit(*)', function(data) {
+                                layer.msg(JSON.stringify(data.field));
+                            });
+                        }
+                    });
+                }
+            };
+            $('.demo').on('click', function() {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    </script>
+</body>
+
+</html>
